@@ -1,0 +1,42 @@
+* {
+    font-family: Tahoma;
+}
+
+
+div.login {
+      display: flex;
+      min-height: 60vh;
+      flex-direction: column;
+    }
+div.login {
+      background: #fff;
+    }
+    .input-field input[type=date]:focus + label,
+    .input-field input[type=text]:focus + label,
+    .input-field input[type=email]:focus + label,
+    .input-field input[type=password]:focus + label {
+      color: #e91e63;
+    }
+    .input-field input[type=date]:focus,
+    .input-field input[type=text]:focus,
+    .input-field input[type=email]:focus,
+    .input-field input[type=password]:focus {
+      border-bottom: 2px solid #e91e63;
+      box-shadow: none;
+    }
+
+
+.site-footer
+{
+  background-color:#26272b;
+  padding:45px 0 20px;
+  font-size:15px;
+  line-height:24px;
+  color:#737373;
+}
+.copyright-text
+{
+  margin:0
+}
+
+
