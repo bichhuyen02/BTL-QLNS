@@ -9,6 +9,18 @@ import cloudinary.uploader
 def index():
     return render_template('home.html')
 
+# đăng nhập trang admin
+@app.route('/login-admin', methods=['post'])
+def login_admin():
+    username = request.form['username']
+    password = request.form['password']
+
+    user = dao.auth_user(username=username, password=password)
+    if user:
+        login_user(user=user)
+
+    return redirect('/admin')
+
 # đăng nhập
 @app.route('/login',methods=['get', 'post'])
 @annonynous_user
