@@ -2,24 +2,25 @@
 
 {% block content %}
 
+    {% if book %}
+    <div class="row">
+        {% for p in book %}
+        <div class="col-md-3 col-sm-12" style="padding:1rem;">
+            <div class="card">
+                <img class="card-img-top" src="{{ p.image }}" alt="{{ p.name }}">
+                <div class="card-body">
+                    <h4 class="card-title">{{ p.name }}</h4>
+                    <p class="card-text">{{ "{:,.1f}".format(p.price) }} VNĐ</p>
+                    <a href="/book/{{p.id}}" class="btn btn-primary">Xem chi tiết</a>
+                    <a href="javascript:;" onclick="addToCart({{p.id}}, '{{p.name}}', {{p.price}})" class="btn btn-danger" class="btn btn-danger">Đặt hàng</a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <p class="text-danger">Không có sản phẩm nào!</p>
+    {% endif %}
 {% endblock %}
-<!--    {% if products %}-->
-<!--    <div class="row">-->
-<!--        {% for p in products %}-->
-<!--        <div class="col-md-3 col-sm-12" style="padding:1rem;">-->
-<!--            <div class="card">-->
-<!--                <img class="card-img-top" src="{{ p.image }}" alt="{{ p.name }}">-->
-<!--                <div class="card-body">-->
-<!--                    <h4 class="card-title">{{ p.name }}</h4>-->
-<!--                    <p class="card-text">{{ "{:,.1f}".format(p.price) }} VNĐ</p>-->
-<!--                    <a href="/products/{{p.id}}" class="btn btn-primary">Xem chi tiết</a>-->
-<!--                    <a href="#" class="btn btn-danger">Đặt hàng</a>-->
-<!--                </div>-->
-<!--            </div>-->
-<!--        </div>-->
-<!--        {% endfor %}-->
-<!--    </div>-->
-<!--    {% else %}-->
-<!--    <p class="text-danger">Không có sản phẩm nào!</p>-->
-<!--    {% endif %}-->
+
 

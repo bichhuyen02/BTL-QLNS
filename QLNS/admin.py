@@ -1,5 +1,5 @@
 from QLNS import db, app
-from QLNS.models import UserRole
+from QLNS.models import Category, Book, UserRole, Tag
 from flask_admin import Admin, BaseView, expose
 from flask_admin.contrib.sqla import ModelView
 from flask import redirect
@@ -34,7 +34,24 @@ class CKTextAreaField(TextAreaField):
     widget = CKTextAreaWidget()
 
 
-
+class BookView(AuthenticatedModelView):
+    column_searchable_list = ['name', 'author']
+    column_filters = ['name', 'author']
+    can_view_details = True
+    column_exclude_list = ['image', 'description']
+    can_export = True
+    column_export_list = ['id', 'name', 'description', 'price']
+    column_labels = {
+        'name': 'Tên sách',
+        'author': 'Tác giả',
+        'description': 'Nội dung',
+        'price': 'Giá'
+    }
+    page_size = 5
+    extra_js = ['//cdn.ckeditor.com/4.6.0/standard/ckeditor.js']
+    form_overrides = {
+        'description': CKTextAreaField
+    }
 
 
 class StatsView(AuthenticatedView):
@@ -51,7 +68,8 @@ class LogoutView(AuthenticatedView):
         return redirect('/admin')
 
 
-# admin.add_view(AuthenticatedModelView(Category, db.session, name='Danh mục'))
-# admin.add_view(ProductView(Product, db.session, name='Sản phẩm'))
+admin.add_view(AuthenticatedModelView(Category, db.session, name='Thể Loại'))
+admin.add_view(AuthenticatedModelView(Tag, db.session, name='Tag'))
+admin.add_view(BookView(Book, db.session, name='Sách'))
 admin.add_view(StatsView(name='Thống kê - báo cáo'))
 admin.add_view(LogoutView(name='Đăng xuất'))

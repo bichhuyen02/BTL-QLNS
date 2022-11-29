@@ -9,6 +9,7 @@ app = Flask(__name__)
 app.secret_key = '4567890sdfghjklcvbnvb4567fg6yug'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:%s@localhost/qlns?charset=utf8mb4' % quote('P@ssword')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
+app.config['CART_KEY'] = 'cart'
 
 db = SQLAlchemy(app=app)
 
