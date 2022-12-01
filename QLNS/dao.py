@@ -53,12 +53,7 @@ def add_bill(cart):
                                bill=r, book_id=c['id'])
             db.session.add(d)
 
-        try:
-            db.session.commit()
-        except:
-            return False
-        else:
-            return True
+        db.session.commit()
 
 
 def count_book_by_cate():

@@ -145,9 +145,10 @@ def pay():
     key = app.config['CART_KEY']
     cart = session.get(key)
 
-    if dao.add_bill(cart=cart):
-        del session[key]
-    else:
+    try:
+        dao.add_bill(cart=cart)
+    except:
         return jsonify({'status': 500})
-
-    return jsonify({'status': 200})
+    else:
+        del session[key]
+        return jsonify({'status': 200})

@@ -3,7 +3,6 @@ from QLNS import app, dao, admin, login, utils, controllers
 
 
 
-# trang chủ
 app.add_url_rule("/",'index',controllers.index)
 app.add_url_rule('/book/<int:book_id>', 'book-detail', controllers.details)
 app.add_url_rule('/login-admin', 'login-admin', controllers.login_admin, methods=['post'])
