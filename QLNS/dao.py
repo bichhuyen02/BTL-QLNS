@@ -1,5 +1,6 @@
 from QLNS.models import User, Category, Book, User, Bill, BillDetails
 from flask_login import current_user
+from sqlalchemy import func
 from QLNS import db
 import hashlib
 
@@ -58,3 +59,32 @@ def add_bill(cart):
             return False
         else:
             return True
+
+
+def count_book_by_cate():
+    return db.session.query(Category.id, Category.name, func.count(Book.id))\
+                     .join(Book, Book.category_id.__eq__(Category.id), isouter=True)\
+                     .group_by(Category.id).all()
+
+
+def stats_revenue(kw=None, from_date=None, to_date=None):
+    query = db.session.query(Book.id, Book.name, func.sum(BillDetails.quantity*BillDetails.price))\
+                      .join(BillDetails, BillDetails.book_id.__eq__(Book.id))\
+                      .join(Bill, Bill.id.__eq__(BillDetails.bill_id))
+
+    if kw:
+        query = query.filter(Book.name.contains(kw))
+
+    if from_date:
+        query = query.filter(Bill.created_date.__ge__(from_date))
+
+    if to_date:
+        query = query.filter(Bill.created_date.__le__(to_date))
+
+    return query.group_by(Book.id).order_by(Book.name).all()
+
+
+if __name__ == '__main__':
+    from QLNS import app
+    with app.app_context():
+        print(stats_revenue())

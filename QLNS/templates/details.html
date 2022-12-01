@@ -11,9 +11,6 @@
             <h5>Tác giả: {{ book.author }}</h5>
             <p>Nội Dung: {{ book.description|safe }}</p>
             <h3>Giá: {{ "{:,.1f}".format(book.price) }} VNĐ</h3>
-            {% for t in book.tag %}
-            <span class="badge bg-success">{{ t.name }}</span>
-            {% endfor %}
         </div>
     </div>
 {% endblock %}

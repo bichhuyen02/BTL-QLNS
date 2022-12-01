@@ -27,9 +27,9 @@ class Category(BaseModel):
         return self.name
 
 
-book_tag= db.Table('book_tag',
-                    Column('book_id', ForeignKey('book.id'), nullable=False, primary_key=True),
-                    Column('tag_id', ForeignKey('tag.id'), nullable=False, primary_key=True))
+# book_tag= db.Table('book_tag',
+#                     Column('book_id', ForeignKey('book.id'), nullable=False, primary_key=True),
+#                     Column('tag_id', ForeignKey('tag.id'), nullable=False, primary_key=True))
 
 
 class Book(BaseModel):
@@ -43,18 +43,19 @@ class Book(BaseModel):
     inventory = Column(Integer,default=0)
     active = Column(Boolean, default=True)
     category_id = Column(Integer, ForeignKey(Category.id), nullable=False)
-    tags = relationship('Tag', secondary='book_tag', lazy='subquery',
-                        backref=backref('book', lazy=True))
-    bill_details = relationship('BillDetails', backref='product', lazy=True)
-    def __str__(self):
-        return self.name
-
-
-class Tag(BaseModel):
-    name = Column(String(50), nullable=False, unique=True)
+    # tags = relationship('Tag', secondary='book_tag', lazy='subquery',
+    #                     backref=backref('book', lazy=True))
+    # bill_details = relationship('BillDetails', backref='product', lazy=True)
 
     def __str__(self):
         return self.name
+
+
+# class Tag(BaseModel):
+#     name = Column(String(50), nullable=False, unique=True)
+#
+#     def __str__(self):
+#         return self.name
 
 
 class User (BaseModel, UserMixin):
@@ -116,20 +117,25 @@ if __name__ == '__main__':
         # db.session.commit()
 
         # p1 = Book(name='LIFE 3.0',
-        #             description='Nội dung chính của Life 3.0 bàn về Trí tuệ nhân tạo (Artificial Intelligence – AI) và những ảnh hưởng của nó tới đời sống con người.',
-        #             author='Max Tegmark', price=161000, category_id=1,
+        #             description='Nội dung chính của Life 3.0 bàn về Trí tuệ nhân tạo (Artificial Intelligence – AI)\
+        #                           và những ảnh hưởng của nó tới đời sống con người.',
+        #             author='Max Tegmark', price=161000,inventory=200, category_id=1,
         #             image='https://res.cloudinary.com/dtoc5lqfe/image/upload/v1669474235/LIEF3.0_b8frkh.jpg')
         # p2 =Book(name='Doraemon',
-        #             description='Đôrêmon là một chú mèo máy được Nôbitô, cháu ba đời của Nôbita gửi về quá khứ cho ông mình để giúp đỡ Nôbita tiến bộ, tức là cũng sẽ cải thiện hoàn cảnh của con cháu Nôbita sau này.',
-        #             author='Fujiko F. Fujio', price=18000, category_id=3,
+        #             description='Đôrêmon là một chú mèo máy được Nôbitô, cháu ba đời của Nôbita gửi về quá khứ cho\
+        #                            ông mình để giúp đỡ Nôbita tiến bộ, tức là cũng sẽ cải thiện hoàn cảnh của con cháu Nôbita sau này.',
+        #             author='Fujiko F. Fujio', price=18000, inventory=200, category_id=3,
         #             image='https://res.cloudinary.com/dtoc5lqfe/image/upload/v1669474236/DORAEMON_xksadg.jpg')
         # p3 = Book(name='ISMS-Hiểu Về Nghệ Thuật Hiện Đại',
-        #             description='Cuốn sách này là một cẩm nang ngắn gọn giới thiệu cho bạn đọc về 55 trào lưu, trường phái và phong cách thịnh hành từ thời kỳ bình minh hé sáng của nghệ thuật hiện đại cuối thế kỷ 19 cho đến nay.',
-        #             author='Sam Phillips', price=245000, category_id=2,
+        #             description='Cuốn sách này là một cẩm nang ngắn gọn giới thiệu cho bạn đọc về 55 trào lưu,\
+        #                           trường phái và phong cách thịnh hành từ thời kỳ bình minh hé sáng của nghệ thuật hiện đại cuối thế kỷ 19 cho đến nay.',
+        #             author='Sam Phillips', price=245000, inventory=200, category_id=2,
         #             image='https://res.cloudinary.com/dtoc5lqfe/image/upload/v1669474237/isms_x7oy3w.jpg')
         # p4 = Book(name='Khám phá thế giới tâm linh',
-        #             description='Bằng những trải nghiệm sống động từ chính cuộc đời mình, cùng với đầu óc khoa học cởi mở, tiếp thu cả những tinh hoa triết lý phương Đông và phương Tây, tác giả Gary Zukav muốn chia sẻ với mọi người những hiểu biết về thế giới nội tâm của con người qua một cách nhìn khác.',
-        #             author='Gary Zukav', price=78000, category_id=4,
+        #             description='Bằng những trải nghiệm sống động từ chính cuộc đời mình, cùng với đầu óc khoa học cởi mở, \
+        #                           tiếp thu cả những tinh hoa triết lý phương Đông và phương Tây, tác giả Gary Zukav muốn chia sẻ \
+        #                           với mọi người những hiểu biết về thế giới nội tâm của con người qua một cách nhìn khác.',
+        #             author='Gary Zukav', price=78000, inventory=200, category_id=4,
         #             image='https://res.cloudinary.com/dtoc5lqfe/image/upload/v1669477718/KPTGTamLinh_ygxrsn.webp')
         # db.session.add_all([p1, p2, p3, p4])
         # db.session.commit()
