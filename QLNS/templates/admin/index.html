@@ -34,13 +34,22 @@
 <script>
     let labels = []
     let data = []
+    let colors = [], borderColors = [];
+    let r, g, b;
     {% for s in stats %}
         labels.push('{{s[1]}}')
         data.push({{s[2]}})
+
+        r = Math.random()*255
+        g = Math.random()*255
+        b = Math.random()*255
+
+        colors.push(`rgba(${r}, ${g}, ${b}, 0.2)`)
+        borderColors.push(`rgba(${r}, ${g}, ${b}, 1)`)
     {% endfor %}
 
     window.onload = function() {
-        cateChart(labels, data)
+        cateChart(labels, data, colors, borderColors)
     }
 </script>
 

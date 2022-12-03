@@ -27,11 +27,6 @@ class Category(BaseModel):
         return self.name
 
 
-# book_tag= db.Table('book_tag',
-#                     Column('book_id', ForeignKey('book.id'), nullable=False, primary_key=True),
-#                     Column('tag_id', ForeignKey('tag.id'), nullable=False, primary_key=True))
-
-
 class Book(BaseModel):
     __tablename__ = 'book'
 
@@ -43,19 +38,10 @@ class Book(BaseModel):
     inventory = Column(Integer,default=0)
     active = Column(Boolean, default=True)
     category_id = Column(Integer, ForeignKey(Category.id), nullable=False)
-    # tags = relationship('Tag', secondary='book_tag', lazy='subquery',
-    #                     backref=backref('book', lazy=True))
-    # bill_details = relationship('BillDetails', backref='product', lazy=True)
+    bill_details = relationship('BillDetails', backref='product', lazy=True)
 
     def __str__(self):
         return self.name
-
-
-# class Tag(BaseModel):
-#     name = Column(String(50), nullable=False, unique=True)
-#
-#     def __str__(self):
-#         return self.name
 
 
 class User (BaseModel, UserMixin):
