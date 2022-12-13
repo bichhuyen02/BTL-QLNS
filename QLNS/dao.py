@@ -63,12 +63,12 @@ def checkup_inventory(book_id, quantity):
 
 def add_bill(cart):
     if cart:
-        r = Bill(user=current_user)
-        db.session.add(r)
+        b = Bill(user=current_user)
+        db.session.add(b)
         for c in cart.values():
             d = BillDetails(quantity=c['quantity'],
                                price=c['price'],
-                               bill=r,
+                               bill=b,
                                book_id=int(c['id']))
             p = Book.query.get(d.book_id)
             p.inventory=p.inventory - d.quantity
@@ -82,17 +82,24 @@ def add_bill(cart):
 
 
 def get_bill():
-    b = db.session.query(func.max(Bill.id)).first()
-    for c in BillDetails.query.filter(BillDetails.bill_id.__eq__(b)).all():
-        book = Book.query.get(c.book_id)
-        # return book.name
-    return b
+    bill = Bill.query.all()
+    max = bill[0].id
+    for c in bill:
+        if max.__lt__(c.id):
+            max = c.id
 
-# def test():
-#     data = []
-#     for c in BillDetails.query.filter(BillDetails.bill_id.__eq__(2)).all():
-#         data = [c.id]
-#     return data
+    b = BillDetails.query.filter(BillDetails.bill_id.__eq__(max)).all()
+
+
+    return b[0].book_id
+
+def get_bill_id():
+    bill = Bill.query.all()
+    max = bill[0].id
+    for c in bill:
+        if max.__lt__(c.id):
+            max = c.id
+    return Bill.query.get(max)
 
 
 def count_book_by_cate():
@@ -123,7 +130,11 @@ def get_comments_by_book(book_id):
 
 
 
-def add_comment(book_id, content):
+def load_comments(book_id):
+    return Comment.query.filter(Comment.product_id.__eq__(book_id)).order_by(-Comment.id).all()
+
+
+def save_comment(book_id, content):
     c = Comment(content=content, book_id=book_id, user=current_user)
     db.session.add(c)
     db.session.commit()
@@ -137,7 +148,8 @@ def add_comment(book_id, content):
 #     db.session.commit()
 
 
-if __name__ == '__main__':
-    from QLNS import app
-    with app.app_context():
-        print(get_bill())
+# if __name__ == '__main__':
+#     from QLNS import app
+#     with app.app_context():
+#         print()
+

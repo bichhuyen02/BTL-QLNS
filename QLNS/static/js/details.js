@@ -1,70 +1,67 @@
-function spinner(flag="block") {
-    let s = document.getElementsByClassName('my-spinner');
+function spinner(status="block") {
+    let s = document.getElementsByClassName("my-spinner")
     for (let i = 0; i < s.length; i++)
-        s[i].style.display=flag;
+        s[i].style.display = status
 }
 
 function loadComments(bookId) {
-    fetch(`/book/${bookId}/comments`).then(res => res.json()).then(data => {
-        console.info(data)
-        let re = ""
-        data.forEach(v => {
-            re += `
-            <li class="list-group-item">
-                <div class="row">
-                    <div class="col-md-1 col-sm-4 text-center">
-                        <img  src="${v.user.avatar}" alt="${v.user.name}" class="rounded-circle" width="100%" />
-                        <p></p>
-                    </div>
-                    <div class="col-md-11 col-sm-8">
-                        <p>${v.content}</p>
-                        <hr>
-                        <small>Bình luận <span class="text-primary">${moment(v.created_date).locale('vi').fromNow()}</span> bởi <span class="text-info">${v.user.name}</span></small>
-                    </div>
-                </div>
-            </li>
+    spinner()
+    fetch(`/api/book/${bookId}/comments`).then(res => res.json()).then(data => {
+        spinner("none")
+        let h = "";
+        data.forEach(c => {
+            h += `
+                <li class="list-group-item">
+                  <div class="row">
+                      <div class="col-md-1 col-sm-4">
+                          <img src="${c.user.avatar}"
+                                class="rounded-circle img-fluid" alt="${c.user.name}"/>
+                      </div>
+                      <div class="col-md-11 col-sm-8">
+                          <p>${c.content}</p>
+                          <small>Bình luận <span class="text-info">${moment(c.created_date).locale("vi").fromNow()}</span> bởi <span class="text-info">${c.user.name}</span></small>
+                      </div>
+                  </div>
+              </li>
             `
         })
 
-        let e = document.getElementById('comments')
-        e.innerHTML = re
-
-        spinner("none")
+        let d = document.getElementById("comments")
+        d.innerHTML = h;
     })
 }
 
 function addComment(bookId) {
-    spinner("block")
-    fetch(`/book/${bookId}/comments`, {
+    spinner()
+    fetch(`/api/book/${bookId}/comments`, {
         method: "post",
         body: JSON.stringify({
             "content": document.getElementById("comment-content").value
         }),
         headers: {
-            'Content-Type': 'application/json'
+            "Content-Type": "application/json"
         }
-    }).then(function(res) { return res.json() }).then(function(data) {
+    }).then((res) => res.json()).then((data) => {
         spinner("none")
-        if (data.status === 204) {
-            let v = data.comment
+       if (data.status === 204) {
+            let c = data.comment
             let h = `
-            <li class="list-group-item">
-                <div class="row">
-                    <div class="col-md-1 col-sm-4 text-center">
-                        <img  src="${v.user.avatar}" alt="${v.user.name}" class="rounded-circle" width="100%" />
-                        <p></p>
-                    </div>
-                    <div class="col-md-11 col-sm-8">
-                        <p>${v.content}</p>
-                        <hr>
-                        <small>Bình luận <span class="text-primary">${moment(v.created_date).locale('vi').fromNow()}</span> bởi <span class="text-info">${v.user.name}</span></small>
-                    </div>
-                </div>
-            </li>
+                <li class="list-group-item">
+                  <div class="row">
+                      <div class="col-md-1 col-sm-4">
+                          <img src="${c.user.avatar}"
+                                class="rounded-circle img-fluid" alt="${c.user.name}"/>
+                      </div>
+                      <div class="col-md-11 col-sm-8">
+                          <p>${c.content}</p>
+                          <small>Bình luận <span class="text-info">${moment(c.created_date).locale("vi").fromNow()}</span> bởi <span class="text-info">${c.user.name}</span></small>
+                      </div>
+                  </div>
+              </li>
             `
-            let e = document.getElementById('comments')
-            e.innerHTML = h + e.innerHTML
-        } else
-            alert("Hệ thống đang bị lỗi!")
-    })
+            let d = document.getElementById("comments")
+            d.innerHTML = h + d.innerHTML;
+       } else
+            alert("Hệ thống bị lỗi!")
+    }) // js promise
 }

@@ -47,7 +47,7 @@ class Book(BaseModel):
     bill_details = relationship('BillDetails', backref='book', lazy=True)
     tags = relationship('Tag', secondary='book_tag', lazy='subquery',
                         backref=backref('book', lazy=True))
-    comments = relationship('Comment', backref='product', lazy=True)
+    comments = relationship('Comment', backref='book', lazy=True)
 
     def __str__(self):
         return self.name

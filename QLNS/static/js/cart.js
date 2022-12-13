@@ -61,9 +61,12 @@ function pay() {
     if (confirm("Bạn chắc chắn thanh toán không?")) {
         fetch("/api/pay").then(res => res.json()).then(data => {
             if (data.status === 200)
-                location.reload()
+                window.location="/bill"
+//                location.reload()
+
         })
     }
+
 
 }
 

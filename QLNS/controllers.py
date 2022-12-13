@@ -8,11 +8,11 @@ import cloudinary.uploader
 # trang chủ
 def index():
     book = dao.load_book(category_id=request.args.get('category_id'),
-                                 kw=request.args.get('keyword'))
-    return render_template('home.html',book=book)
+                         kw=request.args.get('keyword'))
+    return render_template('home.html', book=book)
 
 
-#thông tin chi tiết sách
+# thông tin chi tiết sách
 def details(book_id):
     p = dao.get_book_by_id(book_id)
     return render_template('details.html', book=p)
@@ -47,7 +47,7 @@ def login_my_user():
         # else:
         #     err_msg = 'Tên đăng nhập hoặc mật khẩu không đúng'
 
-    return render_template('login.html')#, err_msg=err_msg)
+    return render_template('login.html')  # , err_msg=err_msg)
 
 
 # đăng xuất
@@ -86,12 +86,12 @@ def register():
     return render_template('register.html', err_msg=err_msg)
 
 
-#giỏ hàng
+# giỏ hàng
 def cart():
     return render_template('cart.html')
 
 
-#thêm sách vào giỏ hàng
+# thêm sách vào giỏ hàng
 def add_to_cart():
     data = request.json
 
@@ -117,7 +117,7 @@ def add_to_cart():
     return jsonify(utils.cart_stats(cart))
 
 
-#UPDATE SL
+# UPDATE SL
 def update_cart(book_id):
     key = app.config['CART_KEY']
 
@@ -131,7 +131,7 @@ def update_cart(book_id):
     return jsonify(utils.cart_stats(cart))
 
 
-#XÓA sách
+# XÓA sách
 def delete_cart(book_id):
     key = app.config['CART_KEY']
 
@@ -144,7 +144,7 @@ def delete_cart(book_id):
     return jsonify(utils.cart_stats(cart))
 
 
-#thanh toán
+# thanh toán
 def pay():
     key = app.config['CART_KEY']
     cart = session.get(key)
@@ -154,13 +154,22 @@ def pay():
     except:
         return jsonify({'status': 500})
     else:
-        del session[key]
         return jsonify({'status': 200})
+        return redirect("/bill")
+        del session[key]
+
+
+def bill():
+    bill= dao.get_bill_id()
+    key = app.config['CART_KEY']
+    cart = session.get(key)
+
+    return render_template('/bill.html', cart=cart, bill=bill)#, billdetails=billdetails)
 
 
 def comments(book_id):
     data = []
-    for c in dao.get_comments_by_book(book_id=book_id):
+    for c in dao.load_comments(book_id):
         data.append({
             'id': c.id,
             'content': c.content,
@@ -174,9 +183,9 @@ def comments(book_id):
     return jsonify(data)
 
 
-def add_comment(book_id):
+def add_commment(book_id):
     try:
-        c = dao.add_comment(book_id=book_id, content=request.json['content'])
+        c = dao.save_comment(book_id=book_id, content=request.json['content'])
     except:
         return jsonify({'status': 500})
     else:

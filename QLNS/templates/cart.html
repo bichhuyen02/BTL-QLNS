@@ -7,8 +7,8 @@
 
 <table class="table">
     <tr>
-        <th>Mã sản phẩm</th>
-        <th>Tên sản phẩm</th>
+        <th>Mã sách</th>
+        <th>Tên sách</th>
         <th>Đơn giá</th>
         <th>Số lượng</th>
         <th></th>
@@ -38,6 +38,7 @@
     <input type="button" value="Thanh toán" onclick="pay()" class="btn btn-success" />
     {% else %}
     <p>Vui lòng <a href="/login?next=/cart">đăng nhập</a> để thanh toán!</p>
+    <a href="/bill" ></a>
     {% endif %}
 </div>
 {% else %}
