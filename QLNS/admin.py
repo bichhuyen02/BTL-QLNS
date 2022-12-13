@@ -1,5 +1,5 @@
 from QLNS import db, app, dao
-from QLNS.models import Category, Book, UserRole
+from QLNS.models import Category, Book, UserRole, Tag
 from flask_admin import Admin, BaseView, expose, AdminIndexView
 from flask_admin.contrib.sqla import ModelView
 from flask import redirect, request
@@ -7,7 +7,7 @@ from flask_login import logout_user, current_user
 from wtforms import TextAreaField
 from wtforms.widgets import TextArea
 
-admin = Admin(app=app, name='Quản trị nhà sách', template_mode='bootstrap4')
+
 
 
 class AuthenticatedModelView(ModelView):
@@ -37,6 +37,7 @@ class CKTextAreaField(TextAreaField):
 class BookView(AuthenticatedModelView):
     column_searchable_list = ['name', 'author']
     column_filters = ['name', 'author']
+    form_excluded_columns = ['bill_details','received_details', 'received', 'tags']
     can_view_details = True
     column_exclude_list = ['image', 'description']
     can_export = True
@@ -47,7 +48,7 @@ class BookView(AuthenticatedModelView):
         'description': 'Nội dung',
         'price': 'Giá'
     }
-    page_size = 5
+    page_size = 7
     extra_js = ['//cdn.ckeditor.com/4.6.0/standard/ckeditor.js']
     form_overrides = {
         'description': CKTextAreaField
@@ -78,7 +79,10 @@ class MyAdminView(AdminIndexView):
         return self.render('admin/index.html', stats=stats)
 
 
+
+admin = Admin(app=app, name='Quản trị nhà sách', template_mode='bootstrap4', index_view=MyAdminView(), )
 admin.add_view(AuthenticatedModelView(Category, db.session, name='Thể Loại'))
 admin.add_view(BookView(Book, db.session, name='Sách'))
+admin.add_view(AuthenticatedModelView(Tag, db.session))
 admin.add_view(StatsView(name='Thống kê - báo cáo'))
 admin.add_view(LogoutView(name='Đăng xuất'))

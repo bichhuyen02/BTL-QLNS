@@ -14,7 +14,8 @@ app.add_url_rule('/api/cart', 'add-cart', controllers.add_to_cart, methods=['pos
 app.add_url_rule('/api/cart/<book_id>', 'update-cart', controllers.update_cart, methods=['put'])
 app.add_url_rule('/api/cart/<book_id>', 'delete-cart', controllers.delete_cart, methods=['delete'])
 app.add_url_rule('/api/pay', 'pay', controllers.pay)
-
+app.add_url_rule('/book/<book_id>/comments', 'comments', controllers.comments)
+app.add_url_rule('/book/<book_id>/comments', 'comment-add', controllers.add_comment, methods=['post'])
 
 @login.user_loader
 def load_user(user_id):

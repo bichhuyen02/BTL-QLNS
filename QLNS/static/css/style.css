@@ -2,18 +2,31 @@
     font-family: Tahoma;
 }
 
-
-.site-footer
-{
-  background-color:#26272b;
-  padding:45px 0 20px;
-  font-size:15px;
-  line-height:24px;
-  color:#737373;
-}
-.copyright-text
-{
-  margin:0
+.header {
+    top: 0;
+    position: sticky;
+    z-index: 1;
+    height: 4rem;
+    font-size: 1.2rem;
 }
 
+.container {
+    margin-top: 10px;
+    padding-top: 10px;
+}
 
+.card-img-top {
+    height: 20rem;
+}
+
+.books:hover {
+    box-shadow: 0 0 30px #166987;
+}
+
+h4.card-title {
+    font-size: 1.2rem;
+}
+
+.card-title {
+    font-weight: 550;
+}

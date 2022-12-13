@@ -10,7 +10,38 @@
             <h1>{{ book.name }}</h1>
             <h5>Tác giả: {{ book.author }}</h5>
             <p>Nội Dung: {{ book.description|safe }}</p>
-            <h3>Giá: {{ "{:,.1f}".format(book.price) }} VNĐ</h3>
+            <h3>Giá: {{ "{:,.0f}".format(book.price) }} VNĐ</h3>
+            {% for t in book.tags %}
+            <span class="badge bg-success">{{ t.name }}</span>
+            {% endfor %}
         </div>
     </div>
+
+<hr>
+
+{% if current_user.is_authenticated %}
+<div class="form-group mt-2">
+    <textarea class="form-control" id="comment-content" placeholder="Nội dung bình luận"></textarea>
+    <button onclick="addComment({{ book.id }})" class="btn btn-success mt-1">Thêm bình luận</button>
+
+</div>
+
+{% else %}
+<p>Vui lòng <a href="/login?next=/book/{{ book.id }}">đăng nhập</a> để bình luận</p>
+{% endif %}
+<div class="spinner-border text-primary my-spinner"></div>
+<ul  id="comments" class="list-group mt-2">
+
+</ul>
+
+{% endblock %}
+
+{% block js %}
+<script src="{{ url_for('static', filename='js/details.js') }}"></script>
+<script>
+  window.onload = () => {
+    loadComments({{book.id}})
+  }
+
+</script>
 {% endblock %}

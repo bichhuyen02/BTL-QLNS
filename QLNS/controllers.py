@@ -33,7 +33,7 @@ def login_admin():
 # đăng nhập
 @annonynous_user
 def login_my_user():
-    err_msg = ''
+    # err_msg = ''
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
@@ -44,10 +44,10 @@ def login_my_user():
 
             n = request.args.get('next')
             return redirect(n if n else '/')
-        else:
-            err_msg = 'Tên đăng nhập hoặc mật khẩu không đúng'
+        # else:
+        #     err_msg = 'Tên đăng nhập hoặc mật khẩu không đúng'
 
-    return render_template('login.html', err_msg=err_msg)
+    return render_template('login.html')#, err_msg=err_msg)
 
 
 # đăng xuất
@@ -60,25 +60,28 @@ def logout_my_user():
 def register():
     err_msg = ''
     if request.method == 'POST':
-        password = request.form['password']
-        confirm = request.form['confirm']
-        if password.__eq__(confirm):
-            avatar = ''
-            if request.files:
-                res = cloudinary.uploader.upload(request.files['avatar'])
-                print(res)
-                avatar = res['secure_url']
+        if dao.checkup_username(request.form['username']).__eq__(True):
+            password = request.form['password']
+            confirm = request.form['confirm']
+            if password.__eq__(confirm):
+                avatar = ''
+                if request.files:
+                    res = cloudinary.uploader.upload(request.files['avatar'])
+                    print(res)
+                    avatar = res['secure_url']
 
-            try:
-                dao.register(name=request.form['name'],
-                             password=password,
-                             username=request.form['username'], avatar=avatar)
+                try:
+                    dao.register(name=request.form['name'],
+                                 password=password,
+                                 username=request.form['username'], avatar=avatar)
 
-                return redirect('/login')
-            except:
-                err_msg = 'Đã có lỗi xảy ra! Vui lòng quay lại sau!'
+                    return redirect('/login')
+                except:
+                    err_msg = 'Đã có lỗi xảy ra! Vui lòng quay lại sau!'
+            else:
+                err_msg = 'Mật khẩu KHÔNG khớp!'
         else:
-            err_msg = 'Mật khẩu KHÔNG khớp!'
+            err_msg = 'Tên user đã tồn tại'
 
     return render_template('register.html', err_msg=err_msg)
 
@@ -120,7 +123,8 @@ def update_cart(book_id):
 
     cart = session.get(key)
     if cart and book_id in cart:
-        cart[book_id]['quantity'] = int(request.json['quantity'])
+        if dao.checkup_inventory(book_id, int(request.json['quantity'])).__eq__(True):
+            cart[book_id]['quantity'] = int(request.json['quantity'])
 
     session[key] = cart
 
@@ -152,3 +156,39 @@ def pay():
     else:
         del session[key]
         return jsonify({'status': 200})
+
+
+def comments(book_id):
+    data = []
+    for c in dao.get_comments_by_book(book_id=book_id):
+        data.append({
+            'id': c.id,
+            'content': c.content,
+            'created_date': str(c.created_date),
+            'user': {
+                'name': c.user.name,
+                'avatar': c.user.avatar
+            }
+        })
+
+    return jsonify(data)
+
+
+def add_comment(book_id):
+    try:
+        c = dao.add_comment(book_id=book_id, content=request.json['content'])
+    except:
+        return jsonify({'status': 500})
+    else:
+        return jsonify({
+            'status': 204,
+            'comment': {
+                'id': c.id,
+                'content': c.content,
+                'created_date': str(c.created_date),
+                'user': {
+                    'name': c.user.name,
+                    'avatar': c.user.avatar
+                }
+            }
+        })
