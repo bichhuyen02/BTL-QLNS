@@ -5,40 +5,53 @@
 {% if current_user.is_authenticated %}
 
 <h1 class="text-center text-success">THỐNG KÊ - BÁO CÁO</h1>
+
 <div class="row">
     <div class="col-md-5 col-sm-12">
         <table class="table">
-            <tr>
-                <th>Id</th>
-                <th>Tên sách</th>
+           <tr>
+                <th>ID</th>
+                <th>Thể loại</th>
+                <th>Tháng</th>
                 <th>Doanh thu</th>
+
             </tr>
-            {% for s in stats %}
+            {% for s in stats1 %}
             <tr>
                 <td>{{ s[0] }}</td>
                 <td>{{ s[1] }}</td>
-                <td>{{ "{:,.0f}".format(s[2]) }} VNĐ</td>
+                <td>{{ s[2] }}</td>
+                <td>{{ "{:,.0f}".format(s[3]) }} VNĐ</td>
             </tr>
             {% endfor %}
         </table>
     </div>
     <div class="col-md-7 col-sm-12">
-         <form>
-            <div class="form-group">
-                <input type="text" class="form-control" name="kw" placeholder="Nhập từ khóa..." />
-            </div>
-            <div class="form-group">
-                <label>Từ ngày</label>
-                <input type="date" class="form-control" name="from_date" />
-            </div>
-             <div class="form-group">
-                <label>Đến ngày</label>
-                <input type="date" class="form-control" name="to_date" />
-            </div>
-            <div>
-                <input type="submit" value="Lọc dữ liệu" class="btn btn-info" />
-            </div>
-        </form>
+        <canvas id="revenueChart1"></canvas>
+    </div>
+</div>
+<hr>
+<div class="row">
+    <div class="col-md-5 col-sm-12">
+        <table class="table">
+           <tr>
+                <th>ID</th>
+                <th>Tên sách</th>
+                <th>Tháng</th>
+                <th>Số sách bán được</th>
+
+           </tr>
+            {% for s in stats %}
+            <tr>
+                <td>{{ s[0] }}</td>
+                <td>{{ s[1] }}</td>
+                <td>{{ s[2] }}</td>
+                <td>{{ s[3] }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+    <div class="col-md-7 col-sm-12">
         <canvas id="revenueChart"></canvas>
     </div>
 </div>
@@ -46,6 +59,23 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="{{ url_for('static', filename='js/my-stats.js') }}"></script>
 <script>
+    let labels1 = []
+    let data1 = []
+    let colors1 = [], borderColors1 = []
+    let r1, g1, b1
+
+    {% for s in stats1 %}
+        labels1.push('{{s[1]}}')
+        data1.push({{s[3]}})
+
+        r1 = Math.random()*255
+        g1 = Math.random()*255
+        b1 = Math.random()*255
+
+        colors1.push(`rgba(${r1}, ${g1}, ${b1}, 0.2)`)
+        borderColors1.push(`rgba(${r1}, ${g1}, ${b1}, 1)`)
+    {% endfor %}
+
     let labels = []
     let data = []
     let colors = [], borderColors = []
@@ -53,7 +83,7 @@
 
     {% for s in stats %}
         labels.push('{{s[1]}}')
-        data.push({{s[2]}})
+        data.push({{s[3]}})
 
         r = Math.random()*255
         g = Math.random()*255
@@ -65,8 +95,9 @@
 
     window.onload = function() {
         revenueChart(labels, data, colors, borderColors)
+        revenueChart1(labels1, data1, colors1, borderColors1)
     }
 </script>
 
-{% endif %}-
+{% endif %}
 {% endblock %}

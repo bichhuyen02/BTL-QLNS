@@ -27,14 +27,14 @@ function updateCart(bookId, obj) {
             "Content-Type": "application/json"
         }
     }).then(res => res.json()).then((data) => {
-        let d = document.getElementsByClassName("cart-counter")
-        for (let i = 0; i < d.length; i++)
-            d[i].innerText = data.total_quantity
+            let d = document.getElementsByClassName("cart-counter")
+            for (let i = 0; i < d.length; i++)
+                d[i].innerText = data.total_quantity
 
-        let a = document.getElementsByClassName("cart-amount")
-        for (let i = 0; i < a.length; i++)
-            a[i].innerText = data.total_amount.toLocaleString("en-US")
-    }).catch(err => console.error(err)) // promise
+            let a = document.getElementsByClassName("cart-amount")
+            for (let i = 0; i < a.length; i++)
+                a[i].innerText = data.total_amount.toLocaleString("en-US")
+    }).catch(err => console.error(err))// promise
 }
 
 function deleteCart(bookId) {
@@ -63,12 +63,16 @@ function pay() {
             if (data.status === 200)
                 window.location="/bill"
 //                location.reload()
-
         })
     }
-
-
 }
 
-function bill(){}
-
+//function deleteSessoin(){
+//    if (confirm("Bạn chắc chắn quay lại không?")) {
+//        fetch("/bill/delete").then(res => res.json()).then(data => {
+//            if (data.status === 200)
+//                window.location="/"
+////                location.reload()
+//        })
+//    }
+//}

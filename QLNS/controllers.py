@@ -33,7 +33,7 @@ def login_admin():
 # đăng nhập
 @annonynous_user
 def login_my_user():
-    # err_msg = ''
+    err_msg = ''
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
@@ -44,10 +44,10 @@ def login_my_user():
 
             n = request.args.get('next')
             return redirect(n if n else '/')
-        # else:
-        #     err_msg = 'Tên đăng nhập hoặc mật khẩu không đúng'
+        else:
+            err_msg = 'Tên đăng nhập hoặc mật khẩu không đúng'
 
-    return render_template('login.html')  # , err_msg=err_msg)
+    return render_template('login.html', err_msg=err_msg)
 
 
 # đăng xuất
@@ -71,7 +71,7 @@ def register():
                     avatar = res['secure_url']
 
                 try:
-                    dao.register(name=request.form['name'],
+                    dao.register(name=request.form['name'], phone=request.form['phone'],
                                  password=password,
                                  username=request.form['username'], avatar=avatar)
 
@@ -120,8 +120,8 @@ def add_to_cart():
 # UPDATE SL
 def update_cart(book_id):
     key = app.config['CART_KEY']
-
     cart = session.get(key)
+
     if cart and book_id in cart:
         if dao.checkup_inventory(book_id, int(request.json['quantity'])).__eq__(True):
             cart[book_id]['quantity'] = int(request.json['quantity'])
@@ -129,6 +129,9 @@ def update_cart(book_id):
     session[key] = cart
 
     return jsonify(utils.cart_stats(cart))
+
+
+
 
 
 # XÓA sách
@@ -156,15 +159,21 @@ def pay():
     else:
         return jsonify({'status': 200})
         return redirect("/bill")
-        del session[key]
 
 
 def bill():
     bill= dao.get_bill_id()
     key = app.config['CART_KEY']
     cart = session.get(key)
+    cart = utils.cart_stats(cart)
 
-    return render_template('/bill.html', cart=cart, bill=bill)#, billdetails=billdetails)
+        # del session[key]
+    return render_template('/bill.html', cart=cart, bill=bill)
+
+# def aback():
+#     key = app.config['CART_KEY']
+#     del session[key]
+#     return jsonify({'status': 200})
 
 
 def comments(book_id):

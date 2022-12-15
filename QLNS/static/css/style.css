@@ -30,3 +30,19 @@ h4.card-title {
 .card-title {
     font-weight: 550;
 }
+
+.p-5 {
+    padding: 2rem!important;
+}
+
+.mt-4 {
+    margin-top: 2rem!important;
+}
+.footer{
+    text-align: center;
+}
+.btn-info {
+    position: absolute;
+    right: 125px;
+    width: 100px;
+}

@@ -37,7 +37,7 @@ class CKTextAreaField(TextAreaField):
 class BookView(AuthenticatedModelView):
     column_searchable_list = ['name', 'author']
     column_filters = ['name', 'author']
-    form_excluded_columns = ['bill_details','received_details', 'received', 'tags']
+    form_excluded_columns = ['bill_details','received_details', 'received', 'tags', 'comments', 'goods_details']
     can_view_details = True
     column_exclude_list = ['image', 'description']
     can_export = True
@@ -58,10 +58,9 @@ class BookView(AuthenticatedModelView):
 class StatsView(AuthenticatedView):
     @expose('/')
     def index(self):
-        stats = dao.stats_revenue(kw=request.args.get('kw'),
-                                  from_date=request.args.get('from_date'),
-                                  to_date=request.args.get('to_date'))
-        return self.render('admin/stats.html',stats=stats)
+        stats = dao.stats_revenue_book()
+        stats1 = dao.stats_revenue_category()
+        return self.render('admin/stats.html', stats=stats, stats1=stats1)
 
 
 

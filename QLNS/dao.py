@@ -3,6 +3,7 @@ from flask_login import current_user
 from sqlalchemy import func
 from QLNS import db
 import hashlib
+from sqlalchemy import extract, and_
 
 
 def load_categories():
@@ -42,9 +43,9 @@ def checkup_username(user_name):
 
 
 
-def register(name, username, password, avatar):
+def register(name, phone, username, password, avatar):
     password = str(hashlib.md5(password.strip().encode('utf-8')).hexdigest())
-    u = User(name=name, username=username.strip(), password=password, avatar=avatar)
+    u = User(name=name, phone=phone, username=username.strip(), password=password, avatar=avatar)
     db.session.add(u)
     db.session.commit()
 
@@ -71,7 +72,7 @@ def add_bill(cart):
                                bill=b,
                                book_id=int(c['id']))
             p = Book.query.get(d.book_id)
-            p.inventory=p.inventory - d.quantity
+            p.inventory = p.inventory - d.quantity
             db.session.add(d)
         try:
             db.session.commit()
@@ -80,18 +81,6 @@ def add_bill(cart):
         else:
             return True
 
-
-def get_bill():
-    bill = Bill.query.all()
-    max = bill[0].id
-    for c in bill:
-        if max.__lt__(c.id):
-            max = c.id
-
-    b = BillDetails.query.filter(BillDetails.bill_id.__eq__(max)).all()
-
-
-    return b[0].book_id
 
 def get_bill_id():
     bill = Bill.query.all()
@@ -108,30 +97,32 @@ def count_book_by_cate():
             .group_by(Category.id).order_by(-Category.name).all()
 
 
-def stats_revenue(kw=None, from_date=None, to_date=None):
-    query = db.session.query(Book.id, Book.name, func.sum(BillDetails.quantity*BillDetails.price))\
-                      .join(BillDetails, BillDetails.book_id.__eq__(Book.id))\
-                      .join(Bill, Bill.id.__eq__(BillDetails.bill_id))
+def stats_revenue_book():
+    data = db.session.query(Book.id, Book.name, func.month(Bill.created_date),
+                            func.sum(BillDetails.quantity)) \
+        .join(Bill) \
+        .filter(Bill.id == BillDetails.bill_id) \
+        .join(Book) \
+        .filter(Book.id == BillDetails.book_id) \
+        .group_by(func.month(Bill.created_date), Book.name) \
+        .order_by(func.month(Bill.created_date), Book.id)
 
-    if kw:
-        query = query.filter(Book.name.contains(kw))
-
-    if from_date:
-        query = query.filter(Bill.created_date.__ge__(from_date))
-
-    if to_date:
-        query = query.filter(Bill.created_date.__le__(to_date))
-
-    return query.group_by(Book.id).order_by(Book.name).all()
+    return data.all()
 
 
-def get_comments_by_book(book_id):
-    return Comment.query.filter(Comment.product_id.__eq__(book_id)).order_by(-Comment.id).all()
-
+def stats_revenue_category():
+    data = db.session.query(Category.id, Category.name, func.month(Bill.created_date),
+                            func.sum(BillDetails.quantity*BillDetails.price)) \
+            .join(Bill).filter(Bill.id == BillDetails.bill_id) \
+            .join(Book).filter(Book.id == BillDetails.book_id) \
+            .join(Category).filter(Category.id == Book.category_id)\
+            .group_by(func.month(Bill.created_date), Category.name) \
+            .order_by(func.month(Bill.created_date), Category.id)
+    return data.all()
 
 
 def load_comments(book_id):
-    return Comment.query.filter(Comment.product_id.__eq__(book_id)).order_by(-Comment.id).all()
+    return Comment.query.filter(Comment.book_id.__eq__(book_id)).order_by(-Comment.id).all()
 
 
 def save_comment(book_id, content):

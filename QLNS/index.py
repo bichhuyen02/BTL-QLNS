@@ -15,6 +15,7 @@ app.add_url_rule('/api/cart/<book_id>', 'update-cart', controllers.update_cart, 
 app.add_url_rule('/api/cart/<book_id>', 'delete-cart', controllers.delete_cart, methods=['delete'])
 app.add_url_rule('/api/pay', 'pay', controllers.pay)
 app.add_url_rule('/bill', 'bill', controllers.bill)
+# app.add_url_rule('/bill/delete', controllers.aback)
 app.add_url_rule('/api/book/<int:book_id>/comments', 'comment-list', controllers.comments)
 app.add_url_rule('/api/book/<int:book_id>/comments', 'comment-add', controllers.add_commment, methods=['post'])
 
